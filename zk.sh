@@ -143,6 +143,7 @@ fi
 
 if [[ "$1" == "index" ]]
 then
+	rm README.md
 	index_files
 fi
 
