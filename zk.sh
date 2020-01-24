@@ -69,8 +69,8 @@ function create_tags() {
 					do
 						mkdir -p ".tags"
 						touch .tags/$i.md
-						printf "[$i](.tags/$i.md)\n" >> index.md
-						printf "[$FILE](../$FILE)\n" >> .tags/$i.md
+						printf "[$i](.tags/$i.md)  \n" >> index.md
+						printf "[$FILE](../$FILE)  \n" >> .tags/$i.md
 					done
 				fi
 			fi
@@ -97,7 +97,7 @@ function index_files() {
 
 			if [[ "$FILE" != "index.md" ]]
 			then
-				printf "[$FILE]($FILE)\n" >> index.md
+				printf "[$FILE]($FILE)  \n" >> index.md
 			fi
 		fi
 		if [[ -d $FILE ]]
@@ -118,7 +118,7 @@ function index_files() {
 		then
 			if [ "$(ls -A $FILE)" ]
 			then
-				printf "[$FILE]($FILE/index.md)\n" >> index.md
+				printf "[$FILE]($FILE/index.md)  \n" >> index.md
 			fi
 		fi
 	done
