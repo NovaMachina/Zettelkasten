@@ -145,3 +145,8 @@ if [[ "$1" == "index" ]]
 then
 	index_files
 fi
+
+if [[ "$1" == "github" ]]
+then
+	mv index.md README.md
+fi
