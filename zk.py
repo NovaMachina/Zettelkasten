@@ -2,6 +2,7 @@
 import sys
 import getopt
 import datetime
+import os
 
 def print_help():
     print("Usage: zk <command>\n")
@@ -35,6 +36,34 @@ def create_new_note():
         file.write("%s\n" % note)
         file.close()
 
+def create_index_file():
+    current_dir = os.path.basename(os.getcwd())
+    file = open("index.md", "w+")
+    file.write("# %s\n" % current_dir)
+    file.close()
+
+def index_files():
+    create_index_file()
+    index = open("index.md", "a")
+
+    for file in os.listdir(os.getcwd()):
+        if os.path.isfile(file) and file.endswith(".md"):
+            if not file.startswith("index.md"):
+                index.write("[%s](%s) \n" % (file, file))
+        elif os.path.isdir(file):
+            if not file.startswith("."):
+                os.chdir(file)
+                index_files()
+                os.chdir("..")
+            else:
+                print("Skipping %s", file)
+    
+    index.write("## Subdirectories\n")
+    for file in os.listdir(os.getcwd()):
+        if not file.startswith(".") and os.path.isdir(file):
+            index.write("[%s](%s/index.md) \n" % (file, file))
+    index.close()
+
 def main(argv):
     try:
         opts, args = getopt.getopt(argv,"hign",["help","index","github","new"])
@@ -46,13 +75,11 @@ def main(argv):
             create_new_note()
             sys.exit()
         elif opt in ("-i", "--index"):
-            print("INDEX")
+            index_files()
             sys.exit()
-            # inputfile = arg
         elif opt in ("-g", "--github"):
             print("GITHUB")
             sys.exit()
-            # outputfile = arg
         elif opt in ("-h", "--help"):
             print_help()
             sys.exit()
