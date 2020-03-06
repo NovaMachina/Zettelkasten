@@ -3,6 +3,8 @@ import sys
 import getopt
 import datetime
 import os
+import shutil
+from TagDictionary import TagDictionary
 
 def print_help():
     print("Usage: zk <command>\n")
@@ -36,6 +38,29 @@ def create_new_note():
         file.write("%s\n" % note)
         file.close()
 
+def create_tags():
+    if os.path.exists(".tags"):
+        shutil.rmtree(".tags")
+    
+    for file in os.listdir(os.getcwd()):
+        tag_line = ""
+        tag_list =[]
+        if os.path.isfile(file) and file.endswith(".md"):
+            if not file.startswith("index.md"):
+                with open(file) as f:
+                    for line in f:
+                        if line.startswith("TAGS="):
+                            tag_line = line
+                            break
+                if tag_line != "":
+                    tag_line = tag_line.lstrip("TAGS=")
+                    tag_line = tag_line.rstrip("\n")
+                    tag_list = tag_line.split(',')
+                    tag_list = [tag.strip() for tag in tag_list]
+            # for tag in tag_list:
+                # TagDictionary.addFile(tag, file)
+    print(os.path.basename(os.getcwd()))
+
 def create_index_file():
     current_dir = os.path.basename(os.getcwd())
     file = open("index.md", "w+")
@@ -51,7 +76,7 @@ def index_files():
             if not file.startswith("index.md"):
                 index.write("[%s](%s) \n" % (file, file))
         elif os.path.isdir(file):
-            if not file.startswith("."):
+            if not file.startswith(".") and not file.startswith("__pycache__"):
                 os.chdir(file)
                 index_files()
                 os.chdir("..")
@@ -60,9 +85,11 @@ def index_files():
     
     index.write("## Subdirectories\n")
     for file in os.listdir(os.getcwd()):
-        if not file.startswith(".") and os.path.isdir(file):
+        if not file.startswith(".") and not file.startswith("__pycache__") and os.path.isdir(file):
             index.write("[%s](%s/index.md) \n" % (file, file))
     index.close()
+
+    create_tags()
 
 def main(argv):
     try:
