@@ -1,6 +1,7 @@
 #!/usr/local/bin/python
 import sys
 import getopt
+import datetime
 
 def print_help():
     print("Usage: zk <command>\n")
@@ -8,6 +9,31 @@ def print_help():
     print("-i, --index  - indexes current notes and creates index pages")
     print("-g, --github - prepares repository to be published to GitHub")
     print("-h, --help   - displays this help page")
+
+def create_new_note():
+    while True:
+        date_time = datetime.datetime.now()
+        date = date_time.strftime("%Y%m%d-%H%M%S")
+        file_name = input("Enter file name: ")
+
+        if file_name == "end":
+            sys.exit()
+
+        file_name = date + "-" + file_name.replace(" ", "-") +".md"
+        print(file_name)
+
+        print("Begin typing note:")
+        note = input(">> ")
+        
+        tags = input("\nAdd tags (seperate tags by ','): ")
+
+        file = open(file_name, "w+")
+        file.write("[//]: %s\n" % file_name)
+        file.write("# %s\n" % file_name)
+        file.write("TAGS=%s\n" % tags)
+        file.write("### Begin Note>>>\n")
+        file.write("%s\n" % note)
+        file.close()
 
 def main(argv):
     try:
@@ -17,7 +43,7 @@ def main(argv):
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-n", "--new"):
-            print("NEW")
+            create_new_note()
             sys.exit()
         elif opt in ("-i", "--index"):
             print("INDEX")
